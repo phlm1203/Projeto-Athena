@@ -1,0 +1,87 @@
+.cd {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 28px clamp(20px, 5vw, 40px) 72px;
+}
+.cd section + section { margin-top: 44px; }
+.cd h2 { font-size: 0.95rem; margin-bottom: 16px; }
+
+.cd-voltar {
+  display: inline-block;
+  margin-bottom: 18px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.cd-voltar:hover { color: var(--text); }
+
+.cd-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.cd-topo h1 { font-size: 1.4rem; line-height: 1.25; }
+.cd-desc { margin-top: 8px; max-width: 520px; color: var(--muted); font-size: 0.88rem; }
+
+.cd-botoes {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.8rem;
+}
+.cd-form { display: grid; gap: 14px; width: 100%; max-width: 520px; }
+
+/* obras da coleção */
+.cd-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+.cd-grade li { display: flex; flex-direction: column; gap: 8px; }
+.cd-remover {
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+}
+.cd-remover:hover { color: var(--text); border-color: var(--wine-bright); }
+.cd-aviso { color: var(--muted); font-size: 0.85rem; }
+
+/* catálogo para adicionar */
+.cd-adicionar .campo { max-width: 420px; margin-bottom: 14px; }
+.cd-lista { display: grid; gap: 10px; }
+.cd-lista li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+}
+.cd-lista img {
+  width: 72px;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.cd-lista div { display: grid; flex: 1; min-width: 0; }
+.cd-lista strong { font-size: 0.85rem; }
+.cd-lista span { font-size: 0.72rem; color: var(--muted); }
+
+/* coleção não encontrada */
+.cd-vazio {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 80px 20px;
+  text-align: center;
+}
+.cd-vazio p { color: var(--muted); }
+.cd-vazio a { font-weight: 600; text-decoration: underline; }

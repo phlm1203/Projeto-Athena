@@ -1,0 +1,25 @@
+.abas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px clamp(20px, 5vw, 56px);
+  background: #202127;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.abas-botao {
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 14px 4px;
+  cursor: pointer;
+}
+.abas-botao:hover { color: var(--text); }
+.abas-botao[aria-selected="true"] {
+  color: var(--text);
+  border-bottom-color: var(--wine-bright);
+}

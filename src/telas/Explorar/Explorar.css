@@ -1,0 +1,98 @@
+.ex {
+  --header-h: 56px; /* altura aproximada do Header; ajuste se a barra lateral ficar desalinhada */
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: calc(100vh - var(--header-h));
+}
+
+.ex .filtro {
+  position: sticky;
+  top: var(--header-h);
+  align-self: start;
+  max-height: calc(100vh - var(--header-h));
+  overflow-y: auto;
+}
+
+.ex-conteudo {
+  min-width: 0;
+  padding: 20px clamp(16px, 3vw, 28px) 56px;
+}
+
+/* BUSCA */
+.ex-busca { position: relative; }
+.ex-busca svg {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+}
+.ex-busca input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.78rem;
+  color: var(--text);
+  background: var(--chip);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 11px 18px 11px 42px;
+}
+.ex-busca input:focus { border-color: var(--wine-bright); outline: none; }
+
+/* CONTAGEM E ORDEM */
+.ex-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 28px 0 18px;
+}
+.ex-contagem { font-size: 0.95rem; font-weight: 700; }
+
+.ex-ordem select {
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--text);
+  background: var(--chip);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+/* GRADE */
+.ex-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+.ex-grade .obra-card { height: 100%; }
+
+/* SEM RESULTADOS */
+.ex-vazio {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 56px 16px;
+  text-align: center;
+  color: var(--muted);
+}
+.ex-vazio p:first-child { color: var(--text); font-weight: 700; }
+.ex-vazio button {
+  margin-top: 14px;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--wine-bright);
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 22px;
+  cursor: pointer;
+}
+.ex-vazio button:hover { background: #c4303a; }
+
+@media (max-width: 860px) {
+  .ex { grid-template-columns: 1fr; }
+  .ex .filtro { position: static; max-height: none; }
+}

@@ -1,0 +1,92 @@
+:root {
+  --bg: #2a2b32;
+  --bg-deep: #14151a;
+  --surface: #33343c;
+  --chip: #1f2026;
+  --text: #f2f2f4;
+  --muted: #b6b7c0;
+  --wine: #7c1d24;
+  --wine-bright: #b3262f;
+  --radius: 14px;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Poppins", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, p { margin: 0; }
+
+:focus-visible { outline: 2px solid var(--wine-bright); outline-offset: 3px; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* BARRA DE ROLAGEM */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--wine) var(--bg-deep);
+}
+
+/* navegadores mais antigos (Chrome/Safari antigos) */
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg-deep); }
+  ::-webkit-scrollbar-thumb {
+    background: var(--wine);
+    border: 2px solid var(--bg-deep);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--wine-bright); }
+}
+
+/* BOTÕES E CAMPOS COMUNS */
+.btn {
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--chip);
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn:hover { background: #2c2d35; }
+.btn-primario { background: var(--wine-bright); }
+.btn-primario:hover { background: #c4303a; }
+
+.campo {
+  display: grid;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.campo input,
+.campo textarea {
+  font: inherit;
+  font-weight: 400;
+  color: var(--text);
+  background: var(--chip);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 14px;
+  resize: vertical;
+}
+.campo input:focus,
+.campo textarea:focus { border-color: var(--wine-bright); outline: none; }

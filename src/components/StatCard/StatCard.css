@@ -1,0 +1,9 @@
+.stat-card {
+  background: #1e2025;
+  border: 1px solid #2c2f36;
+  border-radius: 12px;
+  padding: 20px;
+}
+.stat-card__topo { display: flex; align-items: center; gap: 10px; }
+.stat-card__titulo { font-size: 0.9rem; font-weight: 600; }
+.stat-card__valor { display: block; font-size: 2.5rem; margin-top: 12px; }

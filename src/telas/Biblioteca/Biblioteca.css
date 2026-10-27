@@ -1,0 +1,46 @@
+.biblioteca {
+  padding: 32px 48px;
+  color: #fff;
+}
+
+.biblioteca__sub {
+  color: #b5b5b5;
+  margin: 4px 0 24px;
+}
+
+.biblioteca__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.biblioteca__conteudo {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.painel {
+  background: #1e2025;
+  border: 1px solid #2c2f36;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.painel h2 {
+  font-size: 1rem;
+  margin-bottom: 16px;
+}
+
+.vazio {
+  color: #8a8a8a;
+  padding: 24px 0;
+}
+
+@media (max-width: 900px) {
+  .biblioteca { padding: 24px 16px; }
+  .biblioteca__stats,
+  .biblioteca__conteudo { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,116 @@
+/* TOPO */
+.ob-hero {
+  position: relative;
+  background-color: var(--bg-deep);
+  background-image: 
+    linear-gradient(90deg, var(--bg-deep) 60%, rgba(20, 21, 26, 0) 70%),
+    linear-gradient(rgba(20, 21, 26, 0.3), rgba(20, 21, 26, 0.3)),  
+    var(--banner); 
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: auto 100%;   
+  padding: 56px clamp(20px, 6vw, 80px) 40px;
+}
+.ob-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    var(--bg-deep) 35%,
+    rgba(20, 21, 26, 0.25) 75%,
+    rgba(20, 21, 26, 0.1) 100%
+  );
+}
+.ob-hero-texto { position: relative; max-width: 520px; }
+
+.ob-hero .tag { background: var(--surface); padding: 4px 14px; }
+.ob-meta, .ob-assuntos { display: flex; flex-wrap: wrap; gap: 8px; }
+.ob-meta { margin-bottom: 14px; }
+
+.ob-hero h1 {
+  font-size: clamp(1.6rem, 3.5vw, 2rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.ob-autor { margin-top: 6px; font-size: 0.75rem; }
+.ob-resumo {
+  margin: 14px 0 16px;
+  max-width: 460px;
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+/* SALVAR E COMPARTILHAR */
+.ob-hero-acoes {
+  position: absolute;
+  top: 16px;
+  right: clamp(16px, 3vw, 32px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ob-aviso { font-size: 0.75rem; color: var(--muted); }
+.ob-icone {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.ob-icone:hover { color: var(--text); }
+.ob-icone[aria-pressed="true"] { color: var(--wine-bright); }
+.ob-icone[aria-pressed="true"] svg { fill: currentColor; }
+
+/* CONTEÚDO DAS ABAS */
+.ob-conteudo {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px clamp(16px, 4vw, 32px) 64px;
+}
+.ob-grade {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.ob-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 24px 26px;
+}
+.ob-card h2 { font-size: 0.85rem; font-weight: 700; margin-bottom: 14px; }
+.ob-card p { font-size: 0.8rem; line-height: 1.7; }
+.ob-card p + p { margin-top: 14px; }
+.ob-divisor {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 22px 0;
+}
+
+.ob-tema { color: var(--muted); margin-bottom: 14px; }
+.ob-citacao {
+  margin: 0;
+  padding: 4px 0 4px 18px;
+  border-left: 3px solid var(--wine-bright);
+}
+
+/* OBRA NÃO ENCONTRADA */
+.ob-vazio {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 80px 20px;
+  text-align: center;
+}
+.ob-vazio p { color: var(--muted); }
+.ob-vazio a { font-weight: 600; text-decoration: underline; }
+
+@media (max-width: 860px) {
+  .ob-grade { grid-template-columns: 1fr; }
+  .ob-hero { background-size: cover; background-position: center; }
+}

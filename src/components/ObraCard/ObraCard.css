@@ -1,0 +1,74 @@
+.obra-card {
+  display: flex;
+  flex-direction: column;
+  background: #25272e;
+  border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  color: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.obra-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+}
+
+.obra-card:focus-visible {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+}
+
+/* capa */
+.obra-card__imagem {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #2c2f36;
+}
+
+.obra-card__imagem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.obra-card:hover .obra-card__imagem img {
+  transform: scale(1.04);
+}
+
+.obra-card__vazia {
+  width: 100%;
+  height: 100%;
+  background: #2c2f36;
+}
+
+/* texto */
+.obra-card__corpo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 14px 16px 16px;
+}
+
+.obra-card__titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.obra-card__meta {
+  font-size: 0.8rem;
+  color: #9a9a9a;
+  margin: 4px 0 12px;
+}
+
+.obra-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto; /* empurra as tags para o fim, alinhando os cards da mesma linha */
+}
