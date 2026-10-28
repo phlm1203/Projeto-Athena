@@ -160,7 +160,3 @@ src/
 public/
 └── imgs/obras/   # capas e banners das obras
 ```
-
-## Autor
-
-Desenvolvido por <SEU NOME>.
