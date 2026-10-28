@@ -5,11 +5,11 @@ Plataforma web para estudantes do ENEM encontrarem **repertórios socioculturais
 ## Autores
 
 Desenvolvido pelos alunos da Etec de Taboão da Serra: 
-<br>**Pedro Henrique de Lima Mendes, </br>
-<br> Lucas Duarte de Carvalho, </br>
-<br> Pietro Fernando Arruda Silvestre, </br> 
-<br> Rafael Fonseca Xavier, e </br>
-<br> Raphaela Lima Costa.**</br>
+<br>**Pedro Henrique de Lima Mendes </br>
+<br> Lucas Duarte de Carvalho </br>
+<br> Pietro Fernando Arruda Silvestre </br> 
+<br> Rafael Fonseca Xavier </br>
+<br> Raphaela Lima Costa**</br>
 
 ## O que o projeto faz
 
