@@ -2,14 +2,14 @@
 
 Plataforma web para estudantes do ENEM encontrarem **repertórios socioculturais** para usar nas redações. Filmes, séries, animes, músicas, álbuns e documentários são organizados por tema, com explicação de por que usar cada obra, um exemplo de aplicação e as limitações do repertório.
 
-## Autor
+## Autores
 
 Desenvolvido pelos alunos da Etec de Taboão da Serra: 
-**Pedro Henrique de Lima Mendes, 
-Lucas Duarte de Carvalho, 
-Pietro Fernando Arruda Silvestre, 
-Rafael Fonseca Xavier, e
-Raphaela Lima Costa.**
+<br>**Pedro Henrique de Lima Mendes, </br>
+<br> Lucas Duarte de Carvalho, </br>
+<br> Pietro Fernando Arruda Silvestre, </br> 
+<br> Rafael Fonseca Xavier, e </br>
+<br> Raphaela Lima Costa.**</br>
 
 ## O que o projeto faz
 
