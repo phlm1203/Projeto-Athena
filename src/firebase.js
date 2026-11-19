@@ -3,7 +3,6 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   apiKey: "AIzaSyDXUPqZpPJKqOZjBQYWilNB9yTh8c6J-Ns",
   authDomain: "projeto-athena-e9864.firebaseapp.com",
   projectId: "projeto-athena-e9864",
