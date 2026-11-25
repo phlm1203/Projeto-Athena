@@ -3,8 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import ObraCard from "../../components/ObraCard/ObraCard";
 import { useColecoes } from "../../hooks/useColecoes";
-import { obras } from "../../data/obras";
-import { obrasDaColecao } from "../../data/colecoes";
+import { obrasDaColecao, useCatalogo } from "../../context/CatalogoContext";
 import "./ColecaoDetalhe.css";
 
 const normalizar = (texto) =>
@@ -14,6 +13,19 @@ export default function ColecaoDetalhe() {
   const { id } = useParams();
   const store = useColecoes();
   const colecao = store.colecoes.find((c) => c.id === id);
+
+  if (store.carregando || store.erro) {
+    return (
+      <>
+        <Header />
+        <main className="cd-vazio">
+          {store.erro ? (
+            <p role="alert">Não foi possível carregar a coleção. <button onClick={store.tentarNovamente}>Tentar novamente</button></p>
+          ) : <p role="status">Carregando coleção…</p>}
+        </main>
+      </>
+    );
+  }
 
   if (!colecao) {
     return (
@@ -33,6 +45,7 @@ export default function ColecaoDetalhe() {
 }
 
 function Conteudo({ colecao, store }) {
+  const { obras } = useCatalogo();
   const navigate = useNavigate();
   const [editando, setEditando] = useState(false);
   const [nome, setNome] = useState(colecao.nome);
@@ -40,7 +53,23 @@ function Conteudo({ colecao, store }) {
   const [excluindo, setExcluindo] = useState(false);
   const [busca, setBusca] = useState("");
 
-  const daColecao = obrasDaColecao(colecao);
+  const [falha, setFalha] = useState("");
+  const [salvando, setSalvando] = useState(false);
+
+  async function executar(operacao) {
+    if (salvando) return;
+    setFalha("");
+    setSalvando(true);
+    try {
+      await operacao();
+    } catch {
+      setFalha("Não foi possível salvar a alteração.");
+    } finally {
+      setSalvando(false);
+    }
+  }
+
+  const daColecao = obrasDaColecao(colecao, obras);
 
   const termo = normalizar(busca.trim());
   const disponiveis = obras.filter(
@@ -52,8 +81,10 @@ function Conteudo({ colecao, store }) {
   function salvarEdicao(e) {
     e.preventDefault();
     if (!nome.trim()) return;
-    store.atualizar(colecao.id, { nome: nome.trim(), descricao: descricao.trim() });
-    setEditando(false);
+    executar(async () => {
+      await store.atualizar(colecao.id, { nome: nome.trim(), descricao: descricao.trim() });
+      setEditando(false);
+    });
   }
 
   function cancelarEdicao() {
@@ -63,8 +94,10 @@ function Conteudo({ colecao, store }) {
   }
 
   function excluirColecao() {
-    store.excluir(colecao.id);
-    navigate("/colecoes");
+    executar(async () => {
+      await store.excluir(colecao.id);
+      navigate("/colecoes");
+    });
   }
 
   return (
@@ -72,6 +105,7 @@ function Conteudo({ colecao, store }) {
       <Header />
 
       <main className="cd">
+        {falha && <p role="alert">{falha}</p>}
         <Link to="/colecoes" className="cd-voltar">← Coleções</Link>
 
         <section className="cd-topo">
@@ -86,7 +120,7 @@ function Conteudo({ colecao, store }) {
                 <textarea rows={3} value={descricao} onChange={(e) => setDescricao(e.target.value)} maxLength={160} />
               </label>
               <div className="cd-botoes">
-                <button type="submit" className="btn btn-primario">Salvar</button>
+                <button type="submit" disabled={salvando} className="btn btn-primario">Salvar</button>
                 <button type="button" className="btn" onClick={cancelarEdicao}>Cancelar</button>
               </div>
             </form>
@@ -103,7 +137,7 @@ function Conteudo({ colecao, store }) {
                 {excluindo ? (
                   <>
                     <span>Excluir esta coleção?</span>
-                    <button type="button" className="btn btn-primario" onClick={excluirColecao}>Sim, excluir</button>
+                    <button type="button" className="btn btn-primario" disabled={salvando} onClick={excluirColecao}>Sim, excluir</button>
                     <button type="button" className="btn" onClick={() => setExcluindo(false)}>Cancelar</button>
                   </>
                 ) : (
@@ -126,7 +160,8 @@ function Conteudo({ colecao, store }) {
                     type="button"
                     className="cd-remover"
                     aria-label={`Remover ${obra.nome} da coleção`}
-                    onClick={() => store.removerObra(colecao.id, obra.id)}
+                    disabled={salvando}
+                    onClick={() => executar(() => store.removerObra(colecao.id, obra.id))}
                   >
                     Remover da coleção
                   </button>
@@ -164,7 +199,8 @@ function Conteudo({ colecao, store }) {
                     type="button"
                     className="btn"
                     aria-label={`Adicionar ${obra.nome} à coleção`}
-                    onClick={() => store.adicionarObra(colecao.id, obra.id)}
+                    disabled={salvando}
+                    onClick={() => executar(() => store.adicionarObra(colecao.id, obra.id))}
                   >
                     Adicionar
                   </button>

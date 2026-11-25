@@ -1,28 +1,15 @@
 import Header from "../../components/Header/Header";
 import StatCard from "../../components/StatCard/StatCard";
 import Abas from "../../components/Abas/Abas";
-import ObraCard from "../../components/ObraCard/ObraCard";
+import useSalvas from "../../hooks/useSalvas";
 import GraficoTemas from "../../components/GraficoTemas/GraficoTemas";
 import useBiblioteca from "../../hooks/useBiblioteca";
 import ObraSalvaCard from "../../components/ObraSalvaCard/ObraSalvaCard";
 import "./Biblioteca.css";
 
-const ABAS = [
-  { id: "filmes", label: "Filmes" },
-  { id: "series", label: "Séries e animes" },
-  { id: "musicas", label: "Músicas" },
-  { id: "jogos", label: "Jogos" },
-  { id: "documentarios", label: "Documentários" },
-];
-
-const SALVAS_MOCK = [
-  { obraId: 1, status: "dominado" },
-  { obraId: 2, status: "revisao" },
-];
-
 export default function Biblioteca() {
-  const { abaAtiva, setAbaAtiva, stats, obrasDaAba, temas } =
-    useBiblioteca(SALVAS_MOCK);
+  const { salvas, carregando, erro, atualizarStatus } = useSalvas();
+  const { abas, abaAtiva, setAbaAtiva, stats, obrasDaAba, temas } = useBiblioteca(salvas);
 
   return (
     <>
@@ -44,7 +31,7 @@ export default function Biblioteca() {
             <h2>Minhas obras salvas</h2>
 
             <Abas
-              abas={ABAS}
+              abas={abas}
               ativa={abaAtiva}
               onMudar={setAbaAtiva}
               rotulo="Categorias de obras"
@@ -55,10 +42,13 @@ export default function Biblioteca() {
               id={`painel-${abaAtiva}`}
               aria-labelledby={`aba-${abaAtiva}`}
             >
-              {obrasDaAba.length === 0 ? (
-                <p className="vazio">Nenhuma obra salva nesta categoria ainda.</p>
+              {carregando ? <p role="status">Carregando obras salvas…</p> :
+                erro ? <p role="alert">Não foi possível carregar suas obras.</p> : obrasDaAba.length === 0 ? (
+                <p className="vazio">Nenhuma obra salva para exibir.</p>
               ) : (
-                obrasDaAba.map((obra) => <ObraSalvaCard key={obra.id} obra={obra} />)
+                obrasDaAba.map((obra) => (
+                  <ObraSalvaCard key={obra.id} obra={obra} onAtualizarStatus={atualizarStatus} />
+                ))
               )}
             </div>
           </div>

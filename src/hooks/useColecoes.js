@@ -1,69 +1,74 @@
-import { useState } from "react";
-import { colecoesIniciais } from "../data/colecoes";
+import { useEffect, useState } from "react";
+import {
+  addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc,
+  onSnapshot, runTransaction, serverTimestamp, updateDoc,
+} from "firebase/firestore";
+import { useAuth } from "../context/AuthContext";
+import { useCatalogo } from "../context/CatalogoContext";
+import { db } from "../firebase";
 
-const CHAVE = "athena_colecoes";
-
-function carregar() {
-  try {
-    const salvo = JSON.parse(localStorage.getItem(CHAVE));
-    return Array.isArray(salvo) ? salvo : colecoesIniciais;
-  } catch {
-    return colecoesIniciais;
-  }
+async function iniciarColecoes(uid, exemplos) {
+  const marcador = doc(db, "usuarios", uid, "configuracoes", "colecoes");
+  await runTransaction(db, async (transacao) => {
+    if ((await transacao.get(marcador)).exists()) return;
+    for (const { id, nome, descricao, obras, ordem } of exemplos) {
+      transacao.set(doc(db, "usuarios", uid, "colecoes", id), {
+        nome, descricao: descricao ?? "", obras, ordem: ordem ?? 0,
+      });
+    }
+    transacao.set(marcador, { iniciadas: true });
+  });
 }
 
 export function useColecoes() {
-  const [colecoes, setColecoes] = useState(carregar);
+  const { usuario } = useAuth();
+  const { colecoesIniciais } = useCatalogo();
+  const uid = usuario?.uid;
+  const [estado, setEstado] = useState(null);
+  const [tentativa, setTentativa] = useState(0);
 
-  function salvar(novas) {
-    setColecoes(novas);
-    try {
-      localStorage.setItem(CHAVE, JSON.stringify(novas));
-    } catch {
-      /* sem armazenamento: as mudanças valem só até recarregar a página */
-    }
-  }
-
-  function criar({ nome, descricao }) {
-    const nova = {
-      id: crypto.randomUUID(),
-      nome: nome.trim(),
-      descricao: descricao.trim(),
-      obras: [],
+  useEffect(() => {
+    if (!uid) return;
+    let ativo = true;
+    let cancelar;
+    const falhar = (erro) => {
+      if (ativo) setEstado({ uid, tentativa, erro, colecoes: [] });
     };
-    salvar([nova, ...colecoes]);
-    return nova.id;
+
+    iniciarColecoes(uid, colecoesIniciais).then(() => {
+      if (!ativo) return;
+      cancelar = onSnapshot(collection(db, "usuarios", uid, "colecoes"), (snapshot) => {
+        const colecoes = snapshot.docs.map((item) => ({ ...item.data(), id: item.id }));
+        colecoes.sort((a, b) =>
+          (b.criadaEm?.toMillis() ?? 0) - (a.criadaEm?.toMillis() ?? 0) ||
+          (a.ordem ?? 0) - (b.ordem ?? 0) || a.id.localeCompare(b.id)
+        );
+        setEstado({ uid, tentativa, colecoes });
+      }, falhar);
+    }).catch(falhar);
+
+    return () => { ativo = false; cancelar?.(); };
+  }, [uid, colecoesIniciais, tentativa]);
+
+  const atual = estado?.uid === uid && estado?.tentativa === tentativa ? estado : null;
+  const ref = (id) => doc(db, "usuarios", uid, "colecoes", id);
+
+  async function criar({ nome, descricao }) {
+    const criada = await addDoc(collection(db, "usuarios", uid, "colecoes"), {
+      nome: nome.trim(), descricao: descricao.trim(), obras: [], criadaEm: serverTimestamp(),
+    });
+    return criada.id;
   }
 
-  function excluir(id) {
-    salvar(colecoes.filter((c) => c.id !== id));
-  }
-
-  function atualizar(id, campos) {
-    salvar(colecoes.map((c) => (c.id === id ? { ...c, ...campos } : c)));
-  }
-
-  function adicionarObra(id, obraId) {
-    salvar(
-      colecoes.map((c) =>
-        c.id === id && !c.obras.includes(obraId)
-          ? { ...c, obras: [...c.obras, obraId] }
-          : c
-      )
-    );
-  }
-
-  function removerObra(id, obraId) {
-    salvar(
-      colecoes.map((c) =>
-        c.id === id ? { ...c, obras: c.obras.filter((o) => o !== obraId) } : c
-      )
-    );
-  }
-
-  function restaurar() {
-    salvar(colecoesIniciais);
-  }
-
-  return { colecoes, criar, excluir, atualizar, adicionarObra, removerObra, restaurar };
+  return {
+    colecoes: atual?.colecoes ?? [],
+    carregando: !atual,
+    erro: atual?.erro,
+    tentarNovamente: () => setTentativa((valor) => valor + 1),
+    criar,
+    excluir: (id) => deleteDoc(ref(id)),
+    atualizar: (id, campos) => updateDoc(ref(id), campos),
+    adicionarObra: (id, obraId) => updateDoc(ref(id), { obras: arrayUnion(obraId) }),
+    removerObra: (id, obraId) => updateDoc(ref(id), { obras: arrayRemove(obraId) }),
+  };
 }

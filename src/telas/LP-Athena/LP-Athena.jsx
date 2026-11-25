@@ -2,11 +2,11 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import ObraCard from "../../components/ObraCard/ObraCard";
-import { obras } from "../../data/obras";
-import { assuntos } from "../../data/filtros";
+import { useCatalogo } from "../../context/CatalogoContext";
 import "./LP-Athena.css";
 
 export default function LPAthena() {
+  const { obras, filtros: { assuntos = [] } } = useCatalogo();
   const [busca, setBusca] = useState("");
   const navigate = useNavigate();
   const destaques = obras.filter((obra) => obra.destaque);

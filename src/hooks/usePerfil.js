@@ -1,7 +1,8 @@
 import { useMemo } from "react";
-import { obras } from "../data/obras";
+import { useCatalogo } from "../context/CatalogoContext";
 
 export default function usePerfil(salvas) {
+  const { obras } = useCatalogo();
   return useMemo(() => {
     const itens = salvas
       .map((s) => {
@@ -22,5 +23,5 @@ export default function usePerfil(salvas) {
       totalTemas: temas.size,
       recentes,
     };
-  }, [salvas]);
+  }, [salvas, obras]);
 }

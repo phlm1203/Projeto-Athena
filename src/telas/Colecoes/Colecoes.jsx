@@ -3,22 +3,33 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import ColecaoCard from "../../components/ColecaoCard/ColecaoCard";
 import { useColecoes } from "../../hooks/useColecoes";
-import { obrasDaColecao } from "../../data/colecoes";
+import { obrasDaColecao, useCatalogo } from "../../context/CatalogoContext";
 import "./Colecoes.css";
 
 export default function Colecoes() {
-  const { colecoes, criar, excluir, restaurar } = useColecoes();
+  const { obras } = useCatalogo();
+  const { colecoes, criar, excluir, carregando, erro, tentarNovamente } = useColecoes();
+  const [falha, setFalha] = useState("");
+  const [salvando, setSalvando] = useState(false);
   const navigate = useNavigate();
 
   const [criando, setCriando] = useState(false);
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
 
-  function enviar(e) {
+  async function enviar(e) {
     e.preventDefault();
-    if (!nome.trim()) return;
-    const id = criar({ nome, descricao });
-    navigate(`/colecoes/${id}`); // já abre a coleção nova para a pessoa adicionar obras
+    if (!nome.trim() || salvando) return;
+    setSalvando(true);
+    setFalha("");
+    try {
+      const id = await criar({ nome, descricao });
+      navigate(`/colecoes/${id}`);
+    } catch {
+      setFalha("Não foi possível criar a coleção.");
+    } finally {
+      setSalvando(false);
+    }
   }
 
   function cancelar() {
@@ -32,16 +43,18 @@ export default function Colecoes() {
       <Header />
 
       <main className="col">
+        {falha && <p role="alert">{falha}</p>}
+        {carregando && <p role="status">Carregando suas coleções…</p>}
+        {erro && <p role="alert">Não foi possível carregar suas coleções. <button onClick={tentarNovamente}>Tentar novamente</button></p>}
         <div className="col-topo">
           <div>
-            <h1>Coleções Temáticas</h1>
+            <h1>Minhas coleções</h1>
             <p>
-              Explore listas organizadas por assuntos que estão entre os mais
-              discutidos e podem aparecer no ENEM.
+              Organize suas obras em listas pessoais.
             </p>
           </div>
 
-          {!criando && (
+          {!criando && !carregando && !erro && (
             <button type="button" className="btn btn-primario" onClick={() => setCriando(true)}>
               + Nova coleção
             </button>
@@ -76,20 +89,20 @@ export default function Colecoes() {
             </label>
 
             <div className="col-botoes">
-              <button type="submit" className="btn btn-primario">Criar coleção</button>
+              <button type="submit" disabled={salvando} className="btn btn-primario">Criar coleção</button>
               <button type="button" className="btn" onClick={cancelar}>Cancelar</button>
             </div>
           </form>
         )}
 
-        {colecoes.length > 0 ? (
+        {!carregando && !erro && (colecoes.length > 0 ? (
           <ul className="col-grade">
             {colecoes.map((colecao) => (
               <li key={colecao.id}>
                 <ColecaoCard
                   colecao={colecao}
-                  capa={obrasDaColecao(colecao)[0]?.imagem}
-                  onExcluir={() => excluir(colecao.id)}
+                  capa={obrasDaColecao(colecao, obras)[0]?.imagem}
+                  onExcluir={() => excluir(colecao.id).catch(() => setFalha("Não foi possível excluir a coleção."))}
                 />
               </li>
             ))}
@@ -97,12 +110,8 @@ export default function Colecoes() {
         ) : (
           <div className="col-vazio">
             <p>Você não tem nenhuma coleção.</p>
-            <p>Crie uma nova ou volte às coleções sugeridas.</p>
-            <button type="button" className="btn" onClick={restaurar}>
-              Restaurar coleções sugeridas
-            </button>
           </div>
-        )}
+        ))}
       </main>
     </>
   );

@@ -1,6 +1,7 @@
 .obra-salva {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 16px;
   padding: 16px 0;
   border-bottom: 1px solid #2c2f36;
@@ -11,6 +12,7 @@
 .obra-salva__info h3 { font-size: 0.95rem; }
 .obra-salva__info p { color: #8a8a8a; font-size: 0.8rem; margin: 2px 0 8px; }
 .obra-salva__tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.obra-salva__acoes { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .obra-salva__status {
   font-size: 0.7rem;
   padding: 4px 10px;

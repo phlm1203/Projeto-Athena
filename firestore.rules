@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function dono(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+    match /{colecao}/{id} {
+      allow read: if colecao in ['obras', 'colecoes', 'filtros'];
+    }
+    match /usuarios/{uid}/biblioteca/{id} {
+      allow read, write: if dono(uid);
+    }
+    match /usuarios/{uid}/colecoes/{id} {
+      allow read, write: if dono(uid);
+    }
+    match /usuarios/{uid}/configuracoes/colecoes {
+      allow get, create: if dono(uid);
+    }
+  }
+}

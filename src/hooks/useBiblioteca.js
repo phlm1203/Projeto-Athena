@@ -1,8 +1,11 @@
 import { useMemo, useState } from "react";
-import { obras } from "../data/obras";
+import { useCatalogo } from "../context/CatalogoContext";
+
+const MIDIAS_FIXAS = ["Filmes", "Séries e animes"];
 
 export default function useBiblioteca(salvas) {
-  const [abaAtiva, setAbaAtiva] = useState("filmes");
+  const { obras } = useCatalogo();
+  const [abaAtiva, setAbaAtiva] = useState("todas");
 
   const obrasSalvas = useMemo(
     () =>
@@ -12,7 +15,7 @@ export default function useBiblioteca(salvas) {
           return obra ? { ...obra, status: s.status } : null;
         })
         .filter(Boolean),
-    [salvas]
+    [salvas, obras]
   );
 
   const stats = useMemo(
@@ -25,7 +28,7 @@ export default function useBiblioteca(salvas) {
   );
 
   const obrasDaAba = useMemo(
-    () => obrasSalvas.filter((o) => o.categoria === abaAtiva),
+    () => obrasSalvas.filter((o) => abaAtiva === "todas" || o.midia === abaAtiva),
     [obrasSalvas, abaAtiva]
   );
 
@@ -42,5 +45,11 @@ export default function useBiblioteca(salvas) {
     }));
   }, [obrasSalvas]);
 
-  return { abaAtiva, setAbaAtiva, stats, obrasDaAba, temas };
+  const abas = [
+    { id: "todas", label: "Todas" },
+    ...[...new Set([...MIDIAS_FIXAS, ...obrasSalvas.map((obra) => obra.midia).filter(Boolean)])]
+      .map((midia) => ({ id: midia, label: midia })),
+  ];
+
+  return { abas, abaAtiva, setAbaAtiva, stats, obrasDaAba, temas };
 }

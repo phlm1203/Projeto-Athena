@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import Abas from "../../components/Abas/Abas";
 import Tag from "../../components/Tag/Tag";
-import { obras } from "../../data/obras";
+import { useCatalogo } from "../../context/CatalogoContext";
+import { useAuth } from "../../context/AuthContext";
+import useSalvas from "../../hooks/useSalvas";
 import "./Obra.css";
 
 const ABAS = [
@@ -14,18 +16,9 @@ const ABAS = [
 
 const ROTULO_AUTOR = { "Álbum": "Artista", Filme: "Direção", "Série": "Criação" };
 const EM_BREVE = "Conteúdo em breve.";
-const CHAVE_SALVAS = "athena_obras_salvas";
-
-function lerSalvas() {
-  try {
-    return JSON.parse(localStorage.getItem(CHAVE_SALVAS)) ?? [];
-  } catch {
-    return [];
-  }
-}
-
 export default function Obra() {
   const { id } = useParams();
+  const { obras } = useCatalogo();
   const obra = obras.find((o) => o.id === id);
 
   if (!obra) {
@@ -47,7 +40,11 @@ export default function Obra() {
 
 function ObraConteudo({ obra }) {
   const [aba, setAba] = useState("visao-geral");
-  const [salva, setSalva] = useState(() => lerSalvas().includes(obra.id));
+  const navigate = useNavigate();
+  const { usuario, carregando: carregandoAuth } = useAuth();
+  const { salvas, carregando, erro, salvarObra, removerObra } = useSalvas();
+  const salva = salvas.some(({ obraId }) => obraId === obra.id);
+  const [salvando, setSalvando] = useState(false);
   const [aviso, setAviso] = useState("");
 
   const rotulo = ROTULO_AUTOR[obra.tipo] ?? "Autoria";
@@ -58,16 +55,25 @@ function ObraConteudo({ obra }) {
     setTimeout(() => setAviso(""), 2200);
   }
 
-  function alternarSalva() {
-    const atuais = lerSalvas();
-    const novas = salva ? atuais.filter((x) => x !== obra.id) : [...atuais, obra.id];
-    try {
-      localStorage.setItem(CHAVE_SALVAS, JSON.stringify(novas));
-    } catch {
-      /* armazenamento indisponível: segue só na tela */
+  async function alternarSalva() {
+    if (!usuario) {
+      navigate("/entrar");
+      return;
     }
-    setSalva(!salva);
-    mostrarAviso(salva ? "Removida da biblioteca" : "Salva na biblioteca");
+    if (erro) {
+      mostrarAviso("Não foi possível carregar sua biblioteca.");
+      return;
+    }
+    setSalvando(true);
+    try {
+      if (salva) await removerObra(obra.id);
+      else await salvarObra(obra.id);
+      mostrarAviso(salva ? "Removida da biblioteca" : "Salva na biblioteca");
+    } catch {
+      mostrarAviso("Não foi possível atualizar sua biblioteca.");
+    } finally {
+      setSalvando(false);
+    }
   }
 
   async function compartilhar() {
@@ -101,6 +107,7 @@ function ObraConteudo({ obra }) {
               className="ob-icone"
               aria-pressed={salva}
               aria-label={salva ? "Remover da biblioteca" : "Salvar na biblioteca"}
+              disabled={carregandoAuth || carregando || salvando}
               onClick={alternarSalva}
             >
               <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" aria-hidden="true">

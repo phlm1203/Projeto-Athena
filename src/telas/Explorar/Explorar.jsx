@@ -3,8 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import FiltroSlideBar from "../../components/FiltroSlideBar/FiltroSlideBar";
 import ObraCard from "../../components/ObraCard/ObraCard";
-import { obras } from "../../data/obras";
-import { temasSociais, ordenacoes } from "../../data/filtros";
+import { useCatalogo } from "../../context/CatalogoContext";
 import "./Explorar.css";
 
 // tira acentos e maiúsculas para a busca não falhar por detalhe
@@ -14,6 +13,7 @@ const normalizar = (texto) =>
 const FILTROS_VAZIOS = { midia: [], temas: [], areas: [] };
 
 export default function Explorar() {
+  const { obras, filtros: { temasSociais = [], ordenacoes = [] } } = useCatalogo();
   const [params] = useSearchParams();
 
   const [busca, setBusca] = useState(params.get("busca") ?? "");
@@ -69,7 +69,7 @@ export default function Explorar() {
     if (ordem === "antigos") return [...lista].sort((a, b) => a.ano - b.ano);
     if (ordem === "az") return [...lista].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
     return lista;
-  }, [busca, filtros, ordem]);
+  }, [busca, filtros, ordem, obras]);
 
   return (
     <>

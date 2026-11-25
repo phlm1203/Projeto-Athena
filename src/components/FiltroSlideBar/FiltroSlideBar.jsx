@@ -1,13 +1,14 @@
-import { tiposMidia, temasSociais, areasConhecimento } from "../../data/filtros";
+import { useCatalogo } from "../../context/CatalogoContext";
 import "./FiltroSlideBar.css";
 
 const GRUPOS = [
-  { chave: "midia", titulo: "Tipos de Mídia", todas: "Todas as mídias", opcoes: tiposMidia },
-  { chave: "temas", titulo: "Temas sociais", todas: "Todos os temas", opcoes: temasSociais },
-  { chave: "areas", titulo: "Áreas do Conhecimento", todas: "Todas as áreas", opcoes: areasConhecimento },
+  { chave: "midia", titulo: "Tipos de Mídia", todas: "Todas as mídias", opcoes: "tiposMidia" },
+  { chave: "temas", titulo: "Temas sociais", todas: "Todos os temas", opcoes: "temasSociais" },
+  { chave: "areas", titulo: "Áreas do Conhecimento", todas: "Todas as áreas", opcoes: "areasConhecimento" },
 ];
 
 export default function FiltroSlideBar({ filtros, onAlternar, onLimparGrupo }) {
+  const { filtros: grupos } = useCatalogo();
   return (
     <aside className="filtro" aria-label="Filtros">
       <h2 className="filtro-titulo">Filtros</h2>
@@ -27,7 +28,7 @@ export default function FiltroSlideBar({ filtros, onAlternar, onLimparGrupo }) {
               {grupo.todas}
             </label>
 
-            {grupo.opcoes.map((opcao) => (
+            {(grupos[grupo.opcoes] ?? []).map((opcao) => (
               <label key={opcao}>
                 <input
                   type="checkbox"

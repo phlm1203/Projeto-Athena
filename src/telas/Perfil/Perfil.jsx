@@ -6,7 +6,7 @@ import { auth } from "../../firebase";
 import { useAuth } from "../../context/AuthContext";
 import useSalvas from "../../hooks/useSalvas";
 import usePerfil from "../../hooks/usePerfil";
-import { colecoesIniciais, obrasDaColecao } from "../../data/colecoes";
+import { obrasDaColecao, useCatalogo } from "../../context/CatalogoContext";
 import { tempoRelativo } from "../../utils/tempoRelativo";
 import "./Perfil.css";
 
@@ -28,7 +28,8 @@ function PerfilStat({ valor, rotulo, cor }) {
 }
 
 function ColecaoMini({ colecao }) {
-  const itens = obrasDaColecao(colecao);   // só obras que existem de verdade
+  const { obras } = useCatalogo();
+  const itens = obrasDaColecao(colecao, obras);   // só obras que existem de verdade
   const qtd = itens.length;
   const imagem = itens[0]?.imagem;         // capa = imagem da primeira obra
 
@@ -47,9 +48,12 @@ function ColecaoMini({ colecao }) {
   );
 }
 
+import { useColecoes } from "../../hooks/useColecoes";
+
 export default function Perfil() {
+  const { colecoes, carregando: carregandoColecoes, erro: erroColecoes } = useColecoes();
   const { usuario, sair } = useAuth();
-  const { salvas } = useSalvas();
+  const { salvas, carregando: carregandoSalvas, erro: erroSalvas } = useSalvas();
   const { totalSalvas, totalTemas, recentes } = usePerfil(salvas);
   const navigate = useNavigate();
 
@@ -142,7 +146,7 @@ export default function Perfil() {
             {/* números */}
             <section className="perfil__stats" aria-label="Resumo">
               <PerfilStat valor={totalSalvas} rotulo="Obras salvas" cor="#b91c1c" />
-              <PerfilStat valor={colecoesIniciais.length} rotulo="Coleções criadas" cor="#a16207" />
+              <PerfilStat valor={carregandoColecoes || erroColecoes ? "—" : colecoes.length} rotulo="Coleções criadas" cor="#a16207" />
               <PerfilStat valor={totalTemas} rotulo="Temas em estudo" cor="#6d28d9" />
             </section>
 
@@ -153,7 +157,8 @@ export default function Perfil() {
                 <Link to="/biblioteca">Ver todas →</Link>
               </header>
 
-              {recentes.length === 0 ? (
+              {carregandoSalvas ? <p role="status">Carregando obras salvas…</p> :
+                erroSalvas ? <p role="alert">Não foi possível carregar as obras salvas.</p> : recentes.length === 0 ? (
                 <p className="perfil__vazio">
                   Você ainda não salvou nenhuma obra.{" "}
                   <Link to="/explorar">Explorar obras</Link>
@@ -197,7 +202,7 @@ export default function Perfil() {
             </header>
 
             <div className="perfil__colecoes">
-              {colecoesIniciais.slice(0, 4).map((c) => (
+              {colecoes.slice(0, 4).map((c) => (
                 <ColecaoMini key={c.id} colecao={c} />
               ))}
             </div>
